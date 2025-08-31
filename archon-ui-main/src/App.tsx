@@ -14,6 +14,7 @@ import { ErrorBoundaryWithBugReport } from './components/bug-report/ErrorBoundar
 import { MigrationBanner } from './components/ui/MigrationBanner';
 import { serverHealthService } from './services/serverHealthService';
 import { useMigrationStatus } from './hooks/useMigrationStatus';
+import './i18n';
 
 const AppRoutes = () => {
   const { projectsEnabled } = useSettings();

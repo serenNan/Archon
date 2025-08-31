@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "../contexts/ToastContext";
 import { useSettings } from "../contexts/SettingsContext";
 import { useStaggeredEntrance } from "../hooks/useStaggeredEntrance";
+import { useTranslation } from "react-i18next";
 import { FeaturesSection } from "../components/settings/FeaturesSection";
 import { APIKeysSection } from "../components/settings/APIKeysSection";
 import { RAGSettings } from "../components/settings/RAGSettings";
@@ -61,6 +62,7 @@ export const SettingsPage = () => {
 
   const { showToast } = useToast();
   const { projectsEnabled } = useSettings();
+  const { t } = useTranslation();
 
   // Use staggered entrance animation
   const { isVisible, containerVariants, itemVariants, titleVariants } =
@@ -118,7 +120,7 @@ export const SettingsPage = () => {
           variants={titleVariants}
         >
           <Settings className="w-7 h-7 text-blue-500 filter drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-          Settings
+          {t('settings.title')}
         </motion.h1>
       </motion.div>
 
@@ -129,7 +131,7 @@ export const SettingsPage = () => {
         <div className="space-y-6">
           <motion.div variants={itemVariants}>
             <CollapsibleSettingsCard
-              title="Features"
+              title={t('settings.features')}
               icon={Palette}
               accentColor="purple"
               storageKey="features"
@@ -168,7 +170,7 @@ export const SettingsPage = () => {
         <div className="space-y-6">
           <motion.div variants={itemVariants}>
             <CollapsibleSettingsCard
-              title="API Keys"
+              title={t('settings.apiKeys')}
               icon={Key}
               accentColor="pink"
               storageKey="api-keys"

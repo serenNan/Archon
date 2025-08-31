@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, FileText, Layout, Bot, Settings, Palette, Flame, Monitor } from 'lucide-react';
+import { Moon, Sun, FileText, Layout, Bot, Settings, Palette, Flame, Monitor, Languages } from 'lucide-react';
 import { Toggle } from '../ui/Toggle';
 import { Card } from '../ui/Card';
 import { useTheme } from '../../contexts/ThemeContext';
 import { credentialsService } from '../../services/credentialsService';
 import { useToast } from '../../contexts/ToastContext';
 import { serverHealthService } from '../../services/serverHealthService';
+import { useTranslation } from 'react-i18next';
 
 export const FeaturesSection = () => {
   const {
@@ -13,6 +14,7 @@ export const FeaturesSection = () => {
     setTheme
   } = useTheme();
   const { showToast } = useToast();
+  const { t, i18n } = useTranslation();
   const isDarkMode = theme === 'dark';
   const [projectsEnabled, setProjectsEnabled] = useState(true);
   
@@ -172,6 +174,16 @@ export const FeaturesSection = () => {
     setTheme(checked ? 'dark' : 'light');
   };
 
+  const handleLanguageToggle = (checked: boolean) => {
+    const newLanguage = checked ? 'zh' : 'en';
+    i18n.changeLanguage(newLanguage);
+    localStorage.setItem('i18nextLng', newLanguage);
+    showToast(
+      checked ? '语言已切换至中文' : 'Language switched to English',
+      'success'
+    );
+  };
+
   const handleDisconnectScreenToggle = async (checked: boolean) => {
     if (loading) return;
     
@@ -201,10 +213,10 @@ export const FeaturesSection = () => {
           <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-sm border border-purple-500/20 shadow-lg">
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-800 dark:text-white">
-                Dark Mode
+                {t('settings.theme') === 'Theme' ? 'Dark Mode' : '深色模式'}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Switch between light and dark themes
+                {t('settings.theme') === 'Theme' ? 'Switch between light and dark themes' : '切换浅色和深色主题'}
               </p>
             </div>
             <div className="flex-shrink-0">
@@ -212,14 +224,34 @@ export const FeaturesSection = () => {
             </div>
           </div>
 
+          {/* Language Toggle */}
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-teal-600/5 backdrop-blur-sm border border-teal-500/20 shadow-lg">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-gray-800 dark:text-white">
+                {t('settings.language')}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {i18n.language === 'zh' ? '切换界面语言' : 'Switch interface language'}
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <Toggle 
+                checked={i18n.language === 'zh'} 
+                onCheckedChange={handleLanguageToggle} 
+                accentColor="teal" 
+                icon={<Languages className="w-5 h-5" />}
+              />
+            </div>
+          </div>
+
           {/* Projects Toggle */}
           <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm border border-blue-500/20 shadow-lg">
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-800 dark:text-white">
-                Projects
+                {t('nav.projects')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Enable Projects and Tasks functionality
+                {t('settings.projectsDescription')}
               </p>
               {!projectsSchemaValid && projectsSchemaError && (
                 <p className="text-xs text-red-500 dark:text-red-400 mt-1">
