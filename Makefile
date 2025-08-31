@@ -5,14 +5,21 @@ SHELL := /bin/bash
 # Docker compose command - prefer newer 'docker compose' plugin over standalone 'docker-compose'
 COMPOSE ?= $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
 
-.PHONY: help dev dev-docker stop test test-fe test-be lint lint-fe lint-be clean install check
+.PHONY: help dev dev-docker stop test test-fe test-be lint lint-fe lint-be clean install check start restart status logs
 
 help:
-	@echo "Archon Development Commands"
+	@echo "Archon 命令列表"
 	@echo "==========================="
+	@echo "快速启动命令:"
+	@echo "  make start      - 启动 Archon 服务"
+	@echo "  make stop       - 停止 Archon 服务"
+	@echo "  make restart    - 重启 Archon 服务"
+	@echo "  make status     - 查看服务状态"
+	@echo "  make logs       - 查看服务日志"
+	@echo ""
+	@echo "开发命令:"
 	@echo "  make dev        - Backend in Docker, frontend local (recommended)"
 	@echo "  make dev-docker - Everything in Docker"
-	@echo "  make stop       - Stop all services"
 	@echo "  make test       - Run all tests"
 	@echo "  make test-fe    - Run frontend tests only"
 	@echo "  make test-be    - Run backend tests only"
@@ -105,5 +112,28 @@ clean:
 	else \
 		echo "Cancelled"; \
 	fi
+
+# Quick start commands for production use
+start:
+	@echo "🚀 启动 Archon 服务..."
+	@$(COMPOSE) up -d
+	@sleep 5
+	@echo "✅ Archon 已启动！"
+	@echo "📌 Web 界面: http://localhost:3737"
+	@echo "📌 API 服务: http://localhost:8181"
+	@echo "📌 MCP 服务: http://localhost:8051"
+
+restart: stop start
+
+status:
+	@echo "📊 Archon 服务状态"
+	@echo "==========================="
+	@$(COMPOSE) ps
+	@echo ""
+	@echo "健康检查:"
+	@curl -s http://localhost:8181/health | jq . 2>/dev/null || echo "API 服务未运行"
+
+logs:
+	@$(COMPOSE) logs -f --tail=50
 
 .DEFAULT_GOAL := help

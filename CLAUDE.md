@@ -141,13 +141,23 @@ docker-compose restart              # Restart services
 ### Testing
 
 ```bash
+# Using Make (recommended)
+make test           # Run all tests (frontend + backend)
+make test-fe        # Run frontend tests only
+make test-be        # Run backend tests only
+
 # Frontend tests (from archon-ui-main/)
-npm run test:coverage:stream       # Run with streaming output
+npm run test                       # Run tests
+npm run test:coverage:stream       # Run with streaming output and coverage
 npm run test:ui                    # Run with Vitest UI
+npm run test:coverage              # Generate full coverage report
 
 # Backend tests (from python/)
-uv run pytest tests/test_api_essentials.py -v
-uv run pytest tests/test_service_integration.py -v
+uv run pytest                     # Run all tests
+uv run pytest tests/test_api_essentials.py -v    # Run specific test file
+uv run pytest tests/test_service_integration.py -v  # Integration tests
+uv run pytest -m unit             # Run only unit tests
+uv run pytest -m integration      # Run only integration tests
 ```
 
 ## Key API Endpoints
@@ -257,7 +267,23 @@ We enforce code quality through automated linting and type checking:
 - **Ruff** for linting - checks for errors, warnings, unused imports, and code style
 - **Mypy** for type checking - ensures type safety across the codebase
 - **Auto-formatting** on save in IDEs to maintain consistent style
-- Run `uv run ruff check` and `uv run mypy src/` locally before committing
+
+### Quality Commands
+
+```bash
+# Using Make (recommended)
+make lint           # Run all linters (frontend + backend)
+make lint-fe        # Run frontend linter only (ESLint)
+make lint-be        # Run backend linter only (Ruff with auto-fix)
+
+# Manual commands
+cd python && uv run ruff check          # Check Python code
+cd python && uv run ruff check --fix    # Check and auto-fix Python code
+cd python && uv run mypy src/           # Type checking
+cd archon-ui-main && npm run lint       # Lint frontend code
+```
+
+Always run linting before committing changes.
 
 ## MCP Tools Available
 
@@ -268,6 +294,35 @@ When connected to Cursor/Windsurf:
 - `archon:manage_project` - Project operations
 - `archon:manage_task` - Task management
 - `archon:get_available_sources` - List knowledge sources
+
+## Development Workflows
+
+### Make Commands (Recommended)
+
+The project includes a comprehensive Makefile for streamlined development:
+
+```bash
+make dev        # Backend in Docker, frontend local (recommended for development)
+make dev-docker # Everything in Docker (better for consistency)
+make stop       # Stop all services
+make test       # Run all tests
+make lint       # Run all linters
+make install    # Install dependencies
+make check      # Check environment setup
+make clean      # Remove containers and volumes (with confirmation)
+```
+
+### Development Modes
+
+**Hybrid Mode (Recommended)**: `make dev`
+- Backend services run in Docker (isolated, consistent)
+- Frontend runs locally with hot module replacement
+- Best for active development with instant UI updates
+
+**Full Docker Mode**: `make dev-docker`
+- All services run in Docker containers
+- Better for integration testing
+- Slower frontend updates but more production-like
 
 ## Important Notes
 
